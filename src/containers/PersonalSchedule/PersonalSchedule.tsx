@@ -91,6 +91,11 @@ export function PersonalScheduleContainer({ wcif, person }: PersonalScheduleCont
           wcif={wcif}
           person={person}
           showRoom={useMemo(() => getRooms(wcif).length > 1, [wcif])}
+          showStage={useMemo(() =>
+            getRooms(wcif).flatMap(room =>
+              (room.extensions || [])
+                .flatMap(extension => extension.data?.stages || [])
+            ).length > 0, [wcif])}
           showStationNumber={anyAssignmentsHasStationNumber}
         />
       ) : (

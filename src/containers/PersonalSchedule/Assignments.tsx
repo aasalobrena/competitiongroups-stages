@@ -13,11 +13,12 @@ export interface AssignmentsProps {
   wcif: Competition;
   person: Person;
   showRoom: boolean;
+  showStage: boolean;
   showStationNumber: boolean;
 }
 
 const key = (compId: string, id) => `${compId}-${id}`;
-export function Assignments({ wcif, person, showRoom, showStationNumber }: AssignmentsProps) {
+export function Assignments({ wcif, person, showRoom, showStage, showStationNumber }: AssignmentsProps) {
   const { collapsedDates, setCollapsedDates, toggleDate } = useCollapse(
     key(wcif.id, person.registrantId)
   );
@@ -61,7 +62,9 @@ export function Assignments({ wcif, person, showRoom, showStationNumber }: Assig
               <th className="py-2 text-center">Time</th>
               <th className="py-2 text-center">Assignment</th>
               <th className="py-2 text-center">Group</th>
-              {showRoom && <th className="py-2 text-center">Stage</th>}
+              {showRoom && !showStage && <th className="py-2 text-center">Stage</th>}
+              {showRoom && showStage && <th className="py-2 text-center">Room</th>}
+              {showStage && <th className="py-2 text-center">Stage</th>}
               {showStationNumber && <th className="py-2 text-center">Station</th>}
             </tr>
           </thead>
@@ -74,7 +77,7 @@ export function Assignments({ wcif, person, showRoom, showStationNumber }: Assig
                   {!isSingleDay && (
                     <tr onClick={() => toggleDate(date)}>
                       <td
-                        colSpan={6}
+                        colSpan={7}
                         className="font-bold text-base md:text-lg bg-slate-50 select-none cursor-pointer">
                         <div className="flex justify-between">
                           <span className="p-2 w-full text-center">
@@ -149,6 +152,18 @@ export function Assignments({ wcif, person, showRoom, showStationNumber }: Assig
                       const roomName = room?.name;
                       const roomColor = room?.color;
 
+                      const stage = room?.extensions
+                        ?.flatMap(extension => extension.data?.stages || [])
+                        ?.find(stage =>
+                          stage.id === room?.activities
+                            .flatMap(act => [act, ...(act.childActivities || [])])
+                            .find(act => act.id === activity.id)?.extensions
+                            .find(extension => extension.data?.stageId !== undefined)
+                            ?.data?.stageId
+                        );
+                      const stageName = stage?.name;
+                      const stageColor = stage?.color;
+
                       let howManyNextAssignmentsAreSameRoundAttempt = 0;
                       for (let i = index + 1; i < sortedAssignments.length; i++) {
                         const nextAssignment = sortedAssignments[i];
@@ -211,11 +226,13 @@ export function Assignments({ wcif, person, showRoom, showStationNumber }: Assig
                           activity={activity}
                           timeZone={timeZone}
                           room={{ name: roomName, color: roomColor }}
+                          stage={{ name: stageName, color: stageColor }}
                           isCurrent={isCurrent}
                           isOver={isOver}
                           showTopBorder={showTopBorder}
                           showBottomBorder={showBottomBorder}
                           showRoom={showRoom}
+                          showStage={showStage}
                           showStationNumber={showStationNumber}
                           rowSpan={howManyNextAssignmentsAreSameRoundAttempt}
                         />

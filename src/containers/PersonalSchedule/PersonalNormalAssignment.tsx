@@ -17,11 +17,16 @@ export interface PersonalNormalAssignmentProps {
     name: string;
     color: string;
   };
+  stage: {
+    name: string;
+    color: string;
+  };
   isCurrent?: boolean;
   isOver?: boolean;
   showTopBorder: boolean;
   showBottomBorder: boolean;
   showRoom: boolean;
+  showStage: boolean;
   showStationNumber: boolean;
 
   rowSpan?: number;
@@ -35,9 +40,11 @@ export const PersonalNormalAssignment = ({
   isCurrent = false,
   isOver = false,
   room,
+  stage,
   showTopBorder,
   showBottomBorder,
   showRoom,
+  showStage,
   showStationNumber,
   rowSpan = 1,
 }: PersonalNormalAssignmentProps) => {
@@ -88,6 +95,21 @@ export const PersonalNormalAssignment = ({
               backgroundColor: room.color ? `${room.color}70` : 'inherit',
             }}>
             {room.name}
+          </span>
+        </td>
+      )}
+      {showStage && (
+        <td
+          className="py-2 text-center"
+          style={{
+            lineHeight: 2,
+          }}>
+          <span
+            className="px-[6px]  py-[4px]  rounded-md"
+            style={{
+              backgroundColor: stage.color ? `${stage.color}70` : 'inherit',
+            }}>
+            {stage.name}
           </span>
         </td>
       )}
