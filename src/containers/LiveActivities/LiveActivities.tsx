@@ -14,9 +14,9 @@ const useCommon = (competitionId: string) => {
 
   const { ongoingActivities, ...rest } = useOngoingActivities(competitionId!);
 
-  const stages = wcif ? getRooms(wcif) : [];
+  const rooms = wcif ? getRooms(wcif) : [];
   const roundActivities = wcif ? getAllRoundActivities(wcif) : [];
-  const multistage = stages.length > 1;
+  const multiroom = rooms.length > 1;
 
   // All activities that relate to the ongoing activities
   const childActivities = roundActivities
@@ -34,24 +34,24 @@ const useCommon = (competitionId: string) => {
     .map((person) => {
       const assignment = person.assignments?.find((a) => childActivityIds.includes(a.activityId));
       const activity = childActivities.find((ca) => ca.id === assignment?.activityId);
-      const stage = stages.find((stage) =>
-        stage.activities.some((a) => a.childActivities.some((ca) => ca.id === activity?.id))
+      const room = rooms.find((room) =>
+        room.activities.some((a) => a.childActivities.some((ca) => ca.id === activity?.id))
       );
 
       return {
         ...person,
         assignment,
         activity,
-        stage,
+        room,
       };
     })
     .sort((a, b) => (b.activity?.id || 0) - (a.activity?.id || 0));
 
   return {
     wcif,
-    stages,
+    rooms,
     roundActivities,
-    multistage,
+    multiroom,
     childActivities,
     personsInActivities,
     ...rest,
@@ -63,7 +63,7 @@ interface LiveActivitiesProps {
 }
 
 export const LiveActivities = ({ competitionId }: LiveActivitiesProps) => {
-  const { multistage, childActivities, personsInActivities, liveActivities } =
+  const { multiroom, childActivities, personsInActivities, liveActivities } =
     useCommon(competitionId);
   const now = useNow();
 
@@ -83,7 +83,7 @@ export const LiveActivities = ({ competitionId }: LiveActivitiesProps) => {
 
           return (
             <Fragment>
-              {/* {multistage && <div className="col-span-3">{activity.room?.name}:</div>} */}
+              {/* {multiroom && <div className="col-span-3">{activity.room?.name}:</div>} */}
               <div className="p-1 col-span-6">{activity.name}</div>
               <div className="p-1 col-span-3">{formatTime(liveActivity?.startTime!)}</div>
               <div className="p-1 col-span-3">{minutes ? duration : 'now'}</div>
@@ -127,7 +127,7 @@ export const LiveActivities = ({ competitionId }: LiveActivitiesProps) => {
 
                 {personsInActivity
                   ?.filter((person) => person.assignment?.assignmentCode === assignmentCode)
-                  .sort((a, b) => (a.stage?.name || '').localeCompare(b.stage?.name || ''))
+                  .sort((a, b) => (a.room?.name || '').localeCompare(b.room?.name || ''))
                   ?.map((person) => {
                     return (
                       <Link

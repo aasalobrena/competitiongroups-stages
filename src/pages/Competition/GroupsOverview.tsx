@@ -3,7 +3,7 @@ import { groupActivitiesByRound } from '../../lib/activities';
 import { acceptedRegistration } from '../../lib/person';
 import { useWCIF } from '../../providers/WCIFProvider';
 import { Activity, EventId, parseActivityCode } from '@wca/helpers';
-import { hasAssignmentInStage } from '../../lib/person';
+import { hasAssignmentInRoom } from '../../lib/person';
 import { Container } from '../../components/Container';
 import classNames from 'classnames';
 import { AssignmentCodeCell } from '../../components/AssignmentCodeCell';
@@ -69,7 +69,7 @@ const GroupsOverview = () => {
       });
   }, [assignmentsToObj, wcif?.persons]);
 
-  const stages = wcif?.schedule?.venues?.flatMap((venue) => venue.rooms);
+  const rooms = wcif?.schedule?.venues?.flatMap((venue) => venue.rooms);
 
   const columns = (wcif?.events?.length || 0) * 2 + 2;
 
@@ -93,21 +93,21 @@ const GroupsOverview = () => {
           </tr>
         </thead>
         <tbody>
-          {stages?.map((stage) => {
-            const childActivities = stage.activities.flatMap((ra) => ra.childActivities);
+          {rooms?.map((room) => {
+            const childActivities = room.activities.flatMap((ra) => ra.childActivities);
 
             return (
               <>
                 <tr
                   style={{
-                    backgroundColor: `${stage.color}3f`,
+                    backgroundColor: `${room.color}3f`,
                   }}>
                   <td colSpan={columns} className="px-3 py-2">
-                    {stage.name}
+                    {room.name}
                   </td>
                 </tr>
                 {assignments
-                  ?.filter((person) => hasAssignmentInStage(stage, person))
+                  ?.filter((person) => hasAssignmentInRoom(room, person))
                   .map((person) => {
                     const assignments =
                       person.assignments?.map((assignment) => {

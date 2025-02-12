@@ -9,7 +9,7 @@ import { CutoffTimeLimitPanel } from '../../../components/CutoffTimeLimitPanel';
 export default function GroupList() {
   const { wcif, setTitle } = useWCIF();
   const { competitionId, roundId } = useParams();
-  const { roundActivies } = useWcifUtils();
+  const { roundActivities } = useWcifUtils();
 
   useEffect(() => {
     if (!roundId) {
@@ -24,7 +24,7 @@ export default function GroupList() {
     [roundId, wcif?.events]
   );
 
-  const rounds = roundActivies.filter((ra) => ra.activityCode === roundId);
+  const rounds = roundActivities.filter((ra) => ra.activityCode === roundId);
   const groups = rounds.flatMap((r) => r.childActivities);
   const uniqueGroupCodes = [...new Set(groups.map((g) => g.activityCode))];
 

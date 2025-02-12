@@ -31,10 +31,10 @@ export const useWcifUtils = () => {
   const { wcif } = useWCIF();
 
   const rooms = wcif?.schedule?.venues?.flatMap((venue) => venue.rooms) || [];
-  const roundActivies = rooms.flatMap((room) => room.activities);
-  const childActivities = roundActivies.flatMap((activity) => activity.childActivities);
+  const roundActivities = rooms.flatMap((room) => room.activities);
+  const childActivities = roundActivities.flatMap((activity) => activity.childActivities);
   const acceptedPersons =
     wcif?.persons?.filter((person) => person.registration?.status === 'accepted') || [];
 
-  return { rooms, roundActivies, childActivities, acceptedPersons };
+  return { rooms, roundActivities, childActivities, acceptedPersons };
 };
